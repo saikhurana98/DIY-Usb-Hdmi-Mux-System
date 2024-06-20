@@ -5,8 +5,9 @@ void pulse(int trig_pin, bool state)
     digitalWrite(trig_pin, state ? HIGH : LOW);
 }
 
-Mux::Mux(int trig_pin, int sense_pin, long long retryTimeout)
+Mux::Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout)
 {
+    this->channel = channel;
     this->trigPin = trig_pin;
     this->sensePin = sense_pin;
     this->retryTimeout = retryTimeout;

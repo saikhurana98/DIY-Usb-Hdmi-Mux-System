@@ -3,10 +3,12 @@
 
 Scheduler *userScheduler = new Scheduler();
 
+
+
 Mux *hdmiMuxArray[3] = {
-    new Mux(8, 20, 500),
-    new Mux(18, 19, 500),
-    new Mux(9, 10, 500)};
+    new Mux("A",8, 20, 500),
+    new Mux("B",18, 19, 500),
+    new Mux("C",9, 10, 500)};
 
 Task *tasks[] = {
     new Task(TASK_IMMEDIATE,TASK_FOREVER,[](){ hdmiMuxArray[0]->runtime(); }),

@@ -9,7 +9,7 @@ public:
         HDMI1,
         HDMI2
     };
-
+    String channel;
     Source currentSource;
     Source requestedSource;
     void switchSource(Source source);
@@ -17,7 +17,7 @@ public:
     void init();
     void runtime();
     bool errorFlag = false;
-    Mux(int trig_pin, int sense_pin,long long retryTimeout);
+    Mux(String channel,int trig_pin, int sense_pin,long long retryTimeout);
 
 
 private:
