@@ -2,22 +2,6 @@
 
 
 
-JsonObject SerialHandler::getSource(JsonObject payload)
-{
-}
-JsonObject SerialHandler::getSourceMulti(JsonObject payload)
-{
-}
-
-void SerialHandler::setSource(JsonObject payload)
-{
-}
-
-void SerialHandler::setSourceMulti(JsonObject payload)
-{
-}
-
-
 void SerialHandler::runtime()
 {
     
