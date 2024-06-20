@@ -4,26 +4,27 @@
 class Mux
 {
 public:
-    enum State
+    enum Source
     {
         HDMI1,
         HDMI2
     };
 
-    State currentState;
-    void setState(State state);
+    Source currentSource;
+    Source requestedSource;
+    void switchSource(Source source);
+    Source getCurrentSource();
+    void init();
     void runtime();
     bool errorFlag = false;
-    Mux(int trig_pin, int sense_pin, Scheduler &scheduler, int retries);
+    Mux(int trig_pin, int sense_pin,long long retryTimeout);
+
 
 private:
-    Scheduler *scheduler;
     int trigPin;
     int sensePin;
-    int retries;
-    bool pulsePinLow;
-    long long lastMillis;
+    long long retryTimeout;
     long long requestedTimestamp;
-    State getPinState();
-    void pulse(bool pinState);
+    Source getPinState();
+    void setPinState(bool pinState);
 };
