@@ -1,15 +1,8 @@
-#include <TaskScheduler.h>
+#include <Arduino.h>
+#include <TaskSchedulerDeclarations.h>
 
 class Mux
 {
-private:
-    Scheduler *scheduler;
-    int trig_pin;
-    int sense_pin;
-    int retries;
-    void pulse();
-    Task *task_pulse_on;
-    Task *task_pulse_off;
 public:
     enum State
     {
@@ -17,7 +10,20 @@ public:
         HDMI2
     };
 
-    State getState();
-    bool setState(State state);
-    Mux( int trig_pin, int sense_pin, Scheduler &scheduler, int retries);
+    State currentState;
+    void setState(State state);
+    void runtime();
+    bool errorFlag = false;
+    Mux(int trig_pin, int sense_pin, Scheduler &scheduler, int retries);
+
+private:
+    Scheduler *scheduler;
+    int trigPin;
+    int sensePin;
+    int retries;
+    bool pulsePinLow;
+    long long lastMillis;
+    long long requestedTimestamp;
+    State getPinState();
+    void pulse(bool pinState);
 };
