@@ -5,17 +5,18 @@
 class SerialHandler
 {
 private:
-    Mux *mux_arr;
+    Mux **mux_arr;
     SerialUART *serial;
-    void setSource(JsonObject payload);
-    JsonObject getSource(JsonObject payload);
-    void setSourceMulti(JsonObject payload);
-    JsonObject getSourceMulti(JsonObject payload);
+    void setSource(JsonDocument &payload);
+    JsonDocument getSource(JsonDocument &payload);
+    void setSourceMulti(JsonDocument &payload);
+    JsonDocument getSourceMulti(JsonDocument &payload);
+    Mux *findMuxByChannel(String id);
     int rxPin;
     int txPin;
     double baud;
 public:
     void runtime();
     void init();
-    SerialHandler(int rxPin, int txPin, double baud, Mux *muxArr[],SerialUART &serial);
+    SerialHandler(int rxPin, int txPin, double baud, Mux* muxArr[],SerialUART &serial);
 };

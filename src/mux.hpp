@@ -8,12 +8,15 @@ class Mux
 public:
     enum Source
     {
+        INVALID,
         HDMI1,
         HDMI2
     };
     String channel;
     Source currentSource;
     Source requestedSource;
+    String getSourceStringFromEnum(Source source);
+    Source getSourceEnumfromString(String source);
     void switchSource(Source source);
     Source getCurrentSource();
     void init();

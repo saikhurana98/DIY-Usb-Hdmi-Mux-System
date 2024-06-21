@@ -5,6 +5,8 @@ void pulse(int trig_pin, bool state)
     digitalWrite(trig_pin, state ? HIGH : LOW);
 }
 
+
+
 Mux::Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout)
 {
     this->channel = channel;
@@ -20,12 +22,27 @@ Mux::Source Mux::getPinState()
 
 void Mux::switchSource(Source source)
 {
+    if (source == INVALID) return;
     this->requestedSource = source;
     this->requestedTimestamp = millis();
 }
 Mux::Source Mux::getCurrentSource()
 {
     return this->currentSource;
+}
+
+String Mux::getSourceStringFromEnum(Source source)
+{
+    if (source == Mux::Source::HDMI1) return "HDMI1";
+    else if (source == Mux::Source::HDMI2) return "HDMI2";
+    else return "INVALID";
+}
+
+Mux::Source Mux::getSourceEnumfromString(String source)
+{
+    if (source == "HDMI1") return Mux::Source::HDMI1;
+    else if (source == "HDMI2") return Mux::Source::HDMI2;
+    else return Mux::Source::INVALID;
 }
 
 void Mux::init()
@@ -66,6 +83,7 @@ void Mux::runtime()
 
 
     this->errorFlag = true;
+    this->currentSource = INVALID;
 }
 
 void Mux::setPinState(bool pinState)

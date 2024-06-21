@@ -1,13 +1,13 @@
 {
     "api": [
         {
-            "mode": "GET_SOURCE",
+            "cmd": "GET_SOURCE",
             "payload": {
                 "channel": "A"
             }
         },
         {
-            "mode": "GET_SOURCE_MULTI",
+            "cmd": "GET_SOURCE_MULTI",
             "payload": {
                 "channels": [
                     "A",
@@ -17,16 +17,16 @@
             }
         },
         {
-            "mode": "SET_SOURCE",
+            "cmd": "SET_SOURCE",
             "payload": {
                 "channel": "A",
                 "source": "HDMI1"
             }
         },
         {
-            "mode": "SET_SOURCE_MULTI",
+            "cmd": "SET_SOURCE_MULTI",
             "payload": {
-                "payload": [
+                "channels": [
                     {
                         "channel": "A",
                         "source": "HDMI1"
