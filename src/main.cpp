@@ -1,6 +1,7 @@
-#include "mux.hpp"
 #include <TaskScheduler.h>
 
+#include "mux.hpp"
+#include "serialHandler.hpp"
 Scheduler *userScheduler = new Scheduler();
 
 
@@ -10,19 +11,22 @@ Mux *hdmiMuxArray[3] = {
     new Mux("B",18, 19, 500),
     new Mux("C",9, 10, 500)};
 
+SerialHandler *sh = new SerialHandler(13,12,115200,hdmiMuxArray,Serial1);
+
 Task *tasks[] = {
     new Task(TASK_IMMEDIATE,TASK_FOREVER,[](){ hdmiMuxArray[0]->runtime(); }),
     new Task(TASK_IMMEDIATE,TASK_FOREVER,[](){ hdmiMuxArray[1]->runtime(); }),
     new Task(TASK_IMMEDIATE,TASK_FOREVER,[](){ hdmiMuxArray[2]->runtime(); })
 };
 
+Task *taskSerialHandlerRuntime = new Task(TASK_IMMEDIATE,TASK_FOREVER,[](){
+    sh->runtime();
+});
+
+
 Task *driver_task = new Task(TASK_SECOND * 1, TASK_FOREVER, []()
-                             {
-                                for (auto hdmiMux: hdmiMuxArray)
-                                {
-                                 auto currentSource = hdmiMux->getCurrentSource();
-                                 hdmiMux->switchSource(currentSource == Mux::Source::HDMI1 ? Mux::Source::HDMI2 : Mux::Source::HDMI1);
-                                }
+                            {
+
                             });
 
 
@@ -40,9 +44,13 @@ void setup()
         userScheduler->addTask(*tasks[i]);
         tasks[i]->enable();
     }
+    
     userScheduler->addTask(*driver_task);
-    driver_task->enableDelayed(3000);
+    // driver_task->enableDelayed(3000);
 
+    userScheduler->addTask(*taskSerialHandlerRuntime);
+    taskSerialHandlerRuntime->enable();
+    
     userScheduler->startNow();
 }
 
