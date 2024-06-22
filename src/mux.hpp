@@ -18,6 +18,7 @@ public:
     String getSourceStringFromEnum(Source source);
     Source getSourceEnumfromString(String source);
     void switchSource(Source source);
+    void switchSource(String source);
     Source getCurrentSource();
     void init();
     void runtime();

@@ -26,6 +26,13 @@ void Mux::switchSource(Source source)
     this->requestedSource = source;
     this->requestedTimestamp = millis();
 }
+void Mux::switchSource(String source)
+{
+    Source sourceEnum = this->getSourceEnumfromString(source);
+    if (sourceEnum == INVALID) return;
+    this->requestedSource = sourceEnum;
+    this->requestedTimestamp = millis();
+}
 Mux::Source Mux::getCurrentSource()
 {
     return this->currentSource;

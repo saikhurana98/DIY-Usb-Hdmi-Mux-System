@@ -39,7 +39,7 @@ void SerialHandler::setSource(JsonDocument &payload)
     Mux *foundMux = this->findMuxByChannel(channel);
     if (foundMux == NULL)
         return;
-    foundMux->switchSource(foundMux->getSourceEnumfromString(payload["payload"]["source"]));
+    foundMux->switchSource(payload["payload"]["source"].as<String>());
     return;
 }
 
@@ -81,10 +81,12 @@ void SerialHandler::runtime()
             else if (serialJson["cmd"] == "SET_SOURCE")
             {
                 this->setSource(serialJson);
+                // wait here and get updated state
             }
             else if (serialJson["cmd"] == "SET_SOURCE_MULTI")
             {
                 this->setSourceMulti(serialJson);
+                // wait here and get updated state
             }
             else
             {
