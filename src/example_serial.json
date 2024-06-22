@@ -1,0 +1,46 @@
+{
+    "api": [
+        {
+            "cmd": "GET_SOURCE",
+            "payload": {
+                "channel": "A"
+            }
+        },
+        {
+            "cmd": "GET_SOURCE_MULTI",
+            "payload": {
+                "channels": [
+                    "A",
+                    "B",
+                    "C"
+                ]
+            }
+        },
+        {
+            "cmd": "SET_SOURCE",
+            "payload": {
+                "channel": "A",
+                "source": "HDMI1"
+            }
+        },
+        {
+            "cmd": "SET_SOURCE_MULTI",
+            "payload": {
+                "channels": [
+                    {
+                        "channel": "A",
+                        "source": "HDMI1"
+                    },
+                    {
+                        "channel": "B",
+                        "source": "HDMI2"
+                    },
+                    {
+                        "channel": "C",
+                        "source": "HDMI1"
+                    }
+                ]
+            }
+        }
+    ]
+}

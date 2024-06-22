@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arduino.h>
 #include <TaskSchedulerDeclarations.h>
 
@@ -6,18 +8,22 @@ class Mux
 public:
     enum Source
     {
+        INVALID,
         HDMI1,
         HDMI2
     };
-
+    String channel;
     Source currentSource;
     Source requestedSource;
+    String getSourceStringFromEnum(Source source);
+    Source getSourceEnumfromString(String source);
     void switchSource(Source source);
+    void switchSource(String source);
     Source getCurrentSource();
     void init();
     void runtime();
     bool errorFlag = false;
-    Mux(int trig_pin, int sense_pin,long long retryTimeout);
+    Mux(String channel,int trig_pin, int sense_pin,long long retryTimeout);
 
 
 private:
