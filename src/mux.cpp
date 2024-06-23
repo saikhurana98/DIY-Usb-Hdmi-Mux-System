@@ -1,4 +1,5 @@
 #include "mux.hpp"
+#include "LittleFS.h"
 
 void pulse(int trig_pin, bool state)
 {
@@ -18,6 +19,49 @@ Mux::Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout)
 Mux::Source Mux::getPinState()
 {
     return digitalRead(this->sensePin) == HIGH ? HDMI1 : HDMI2;
+}
+
+Mux::Source Mux::getDefaultSourceConfig()
+{
+    return this->defaultSource;
+}
+void Mux::setDefaultSourceConfig(Source source)
+{
+    if(source == INVALID) return;
+    this->defaultSource = source;
+    // TODO: Save current source to flash;
+}
+
+
+bool Mux::loadStoredConfig()
+{
+    if (!LittleFS.exists("/config.json"))
+    {
+        Serial.printf("Config file now found, using default values");
+    }
+
+    File f = LittleFS.open("/config.json","w");
+    if (!f)
+    {
+        Serial.printf("Unable to open the file.");
+    }
+    JsonDocument defaultConfigJson;
+    DeserializationError deserializationError = deserializeJson(defaultConfigJson, f);    
+
+    if (deserializationError) 
+    {
+        Serial.println("Deserialization Error");
+    }
+
+    this->defaultConfig.restoreMode = defaultConfigJson["restoreMode"] | RestoreMode::NONE;
+
+    return true;
+    
+}
+
+bool Mux::saveStoredConfig()
+{
+
 }
 
 void Mux::switchSource(Source source)
@@ -59,6 +103,8 @@ void Mux::init()
     this->currentSource = this->getPinState();
     this->requestedSource = this->currentSource;
     this->errorFlag = false;
+
+    // TODO: Load config from flash else load default;
 }
 
 
