@@ -1,4 +1,5 @@
 #include <ArduinoJson.h>
+#include <LittleFS.h>
 #include <Arduino.h>
 #include <vector>
 #include <map>
@@ -36,6 +37,11 @@ public:
         {HdmiSource::HDMI1, "HDMI1"},
         {HdmiSource::HDMI2, "HDMI2"},
     };
+    std::map<String, HdmiSource> hdmiStringSourceMap = {
+        { "INVALID", HdmiSource::INVALID},
+        { "HDMI1", HdmiSource::HDMI1},
+        { "HDMI2", HdmiSource::HDMI2},
+    };
     std::map<RestoreMode, String> RestoreModeStringMap = {
         {RestoreMode::NONE, "NONE"},
         {RestoreMode::LAST_STATE, "LAST_STATE"},
@@ -46,9 +52,10 @@ public:
     std::map<String, HdmiSource> restoreState;
     RestoreMode currentRestoreMode;
     void addHdmiPinout(String channelId, int trigPin, int sensePin);
+    void init();
+    Config(int serialRxPin , int serialTxPin , double baud , HdmiChannelPinout &pinout , RestoreMode restoreMode);
+private:
+    String flashConfigFilename = "config.json";
     void load();
     void save();
-    Config(int serialRxPin , int serialTxPin , double baud , HdmiChannelPinout &pinout , RestoreMode restoreMode);
-
-private:
 };
