@@ -55,7 +55,7 @@ public:
     void init();
     Config(int serialRxPin , int serialTxPin , double baud , HdmiChannelPinout &pinout , RestoreMode restoreMode);
 private:
-    String flashConfigFilename = "config.json";
+    String flashConfigFilename = "/config.json";
     void load();
     void save();
 };
