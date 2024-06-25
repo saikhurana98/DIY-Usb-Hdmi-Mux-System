@@ -2,8 +2,12 @@
 
 #include "mux.hpp"
 #include "serialHandler.hpp"
+#include "config.hpp"
+
 Scheduler *userScheduler = new Scheduler();
 
+
+Config *appConfig = new Config(13,13,115200,Config::RestoreMode::NONE);
 
 
 Mux *hdmiMuxArray[3] = {
@@ -32,7 +36,6 @@ Task *driver_task = new Task(TASK_SECOND * 1, TASK_FOREVER, []()
 
 void setup()
 {
-    
     sh->init();
 
     for (int i = 0; i < 3 ; i++)

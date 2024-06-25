@@ -1,37 +1,9 @@
 {
     "config": {
-        "restoreMode": "NONE", "LAST_STATE" , "CUSTOM",
-        "last-state": [
-            {
-                "channel": "A",
-                "source": "HDMI1"
-            },
-            {
-                "channel": "B",
-                "source": "HDMI1"
-            },
-            {
-                "channel": "C",
-                "source": "HDMI1"
-            }
-        ],
-        "custom-config": [
-            {
-                "channels": [
-                    {
-                        "channel": "A",
-                        "source": "HDMI1"
-                    },
-                    {
-                        "channel": "B",
-                        "source": "HDMI2"
-                    },
-                    {
-                        "channel": "C",
-                        "source": "HDMI1"
-                    }
-                ]
-            }
-        ]
+        "restoreState": {
+            "A": "HDMI1",
+            "B": "HDMI2",
+            "C": "HDMI1"
+        }
     }
 }

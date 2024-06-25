@@ -4,34 +4,6 @@
 #include <TaskSchedulerDeclarations.h>
 #include <ArduinoJson.h>
 
-typedef enum {
-    NONE, 
-    LAST_STATE,
-    CUSTOM
-} RestoreMode;
-
-typedef enum {
-    INVALID,
-    HDMI1,
-    HDMI2
-} Source;
-
-typedef struct {
-    String channel;
-    String source;
-} ChannelConfig;
-
-typedef struct {
-    int numChannels;
-    ChannelConfig channels[];
-} ChannelsConfig;
-
-struct DefaultConfig
-{
-    RestoreMode restoreMode;
-    ChannelsConfig lastState;
-    ChannelConfig customState;
-};
 class Mux
 {
 public:
@@ -62,11 +34,8 @@ public:
 private:
     int trigPin;
     int sensePin;
-    DefaultConfig defaultConfig;
     long long retryTimeout;
     long long requestedTimestamp;
     Source getPinState();
-    bool loadStoredConfig();
-    bool saveStoredConfig();
     void setPinState(bool pinState);
 };
