@@ -1,12 +1,12 @@
 #include "config.hpp"
 
-Config::Config(int serialRxPin, int serialTxPin, double baud, HdmiChannelPinout &pinout, RestoreMode restoreMode)
+Config::Config(int serialRxPin, int serialTxPin, double baud, HdmiChannelPinoutMap &pinouts, RestoreMode restoreMode)
 {
     this->serialConfig.baudRate = baud;
     this->serialConfig.txPin = serialTxPin;
     this->serialConfig.rxPin = serialRxPin;
     this->currentRestoreMode = restoreMode;
-    this->hdmiChannelPinouts = &pinout;
+    this->hdmiChannelPinouts = &pinouts;
 }
 void Config::init()
 {
@@ -96,8 +96,8 @@ void Config::addHdmiPinout(String channelId, int trigPin, int sensePin)
 {
     this->hdmiChannelPinouts[0][channelId] = make_pair(trigPin, sensePin);
 
-    if (this->currentRestoreMode = Config::NONE)
+    if (this->currentRestoreMode = RestoreMode::NONE)
     {
-        this->restoreState[channelId] = Config::HdmiSource::HDMI1;
+        this->restoreState[channelId] = HdmiSource::HDMI1;
     }
 }

@@ -1,17 +1,15 @@
 #include <TaskScheduler.h>
 
-#include "mux.hpp"
 #include "serialHandler.hpp"
-#include "config.hpp"
 
 Scheduler *userScheduler = new Scheduler();
 
-HdmiChannelPinout hdmiPinout = {
+HdmiChannelPinoutMap hdmiPinout = {
     {"A", make_pair(9, 10)},
     {"B", make_pair(18, 19)},
     {"C", make_pair(8, 20)}};
 
-Config *appConfig = new Config(13, 13, 115200, hdmiPinout, Config::RestoreMode::NONE);
+Config *appConfig = new Config(13, 13, 115200, hdmiPinout, RestoreMode::NONE);
 
 
 

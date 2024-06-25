@@ -19,8 +19,7 @@
         {
             "cmd": "SET_SOURCE",
             "payload": {
-                "channel": "A",
-                "source": "HDMI1"
+                "A": "HDMI1"
             }
         },
         {
@@ -28,16 +27,9 @@
             "payload": {
                 "channels": [
                     {
-                        "channel": "A",
-                        "source": "HDMI1"
-                    },
-                    {
-                        "channel": "B",
-                        "source": "HDMI2"
-                    },
-                    {
-                        "channel": "C",
-                        "source": "HDMI1"
+                        "A": "HDMI1",
+                        "B": "HDMI2",
+                        "C": "HDMI1"
                     }
                 ]
             }

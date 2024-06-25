@@ -1,3 +1,6 @@
+#pragma once
+
+
 #include <ArduinoJson.h>
 #include <LittleFS.h>
 #include <Arduino.h>
@@ -13,34 +16,35 @@ typedef struct
     double baudRate;
 } SerialConfig;
 
-typedef std::map<String, pair<int, int>> HdmiChannelPinout;
 
+enum HdmiSource
+{
+    INVALID,
+    HDMI1,
+    HDMI2
+};
+
+enum RestoreMode
+{
+    NONE,
+    LAST_STATE,
+    CUSTOM
+};
+
+typedef std::map<String, pair<int, int>> HdmiChannelPinoutMap;
+typedef std::map<String, HdmiSource> HdmiChannelSourceMap;
 class Config
 {
 public:
-    enum HdmiSource
-    {
-        INVALID,
-        HDMI1,
-        HDMI2
-    };
-
-    enum RestoreMode
-    {
-        NONE,
-        LAST_STATE,
-        CUSTOM
-    };
-
     std::map<HdmiSource, String> hdmiSourceStringMap = {
         {HdmiSource::INVALID, "INVALID"},
         {HdmiSource::HDMI1, "HDMI1"},
         {HdmiSource::HDMI2, "HDMI2"},
     };
     std::map<String, HdmiSource> hdmiStringSourceMap = {
-        { "INVALID", HdmiSource::INVALID},
-        { "HDMI1", HdmiSource::HDMI1},
-        { "HDMI2", HdmiSource::HDMI2},
+        {"INVALID", HdmiSource::INVALID},
+        {"HDMI1", HdmiSource::HDMI1},
+        {"HDMI2", HdmiSource::HDMI2},
     };
     std::map<RestoreMode, String> RestoreModeStringMap = {
         {RestoreMode::NONE, "NONE"},
@@ -48,12 +52,13 @@ public:
         {RestoreMode::CUSTOM, "CUSTOM"},
     };
     SerialConfig serialConfig;
-    HdmiChannelPinout *hdmiChannelPinouts;
-    std::map<String, HdmiSource> restoreState;
+    HdmiChannelPinoutMap *hdmiChannelPinouts;
+    HdmiChannelSourceMap restoreState;
     RestoreMode currentRestoreMode;
     void addHdmiPinout(String channelId, int trigPin, int sensePin);
     void init();
-    Config(int serialRxPin , int serialTxPin , double baud , HdmiChannelPinout &pinout , RestoreMode restoreMode);
+    Config(int serialRxPin, int serialTxPin, double baud, HdmiChannelPinoutMap &pinout, RestoreMode restoreMode);
+
 private:
     String flashConfigFilename = "/config.json";
     void load();

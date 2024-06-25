@@ -16,23 +16,23 @@ Mux::Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout)
     this->retryTimeout = retryTimeout;
 }
 
-Mux::Source Mux::getPinState()
+HdmiSource Mux::getPinState()
 {
     return digitalRead(this->sensePin) == HIGH ? HDMI1 : HDMI2;
 }
 
-Mux::Source Mux::getDefaultSourceConfig()
+HdmiSource Mux::getDefaultSourceConfig()
 {
     return this->defaultSource;
 }
-void Mux::setDefaultSourceConfig(Source source)
+void Mux::setDefaultSourceConfig(HdmiSource source)
 {
     if(source == INVALID) return;
     this->defaultSource = source;
     // TODO: Save current source to flash;
 }
 
-void Mux::switchSource(Source source)
+void Mux::switchSource(HdmiSource source)
 {
     if (source == INVALID) return;
     this->requestedSource = source;
@@ -40,28 +40,28 @@ void Mux::switchSource(Source source)
 }
 void Mux::switchSource(String source)
 {
-    Source sourceEnum = this->getSourceEnumfromString(source);
+    HdmiSource sourceEnum = this->getSourceEnumfromString(source);
     if (sourceEnum == INVALID) return;
     this->requestedSource = sourceEnum;
     this->requestedTimestamp = millis();
 }
-Mux::Source Mux::getCurrentSource()
+HdmiSource Mux::getCurrentSource()
 {
     return this->currentSource;
 }
 
-String Mux::getSourceStringFromEnum(Source source)
+String Mux::getSourceStringFromEnum(HdmiSource source)
 {
-    if (source == Mux::Source::HDMI1) return "HDMI1";
-    else if (source == Mux::Source::HDMI2) return "HDMI2";
+    if (source == HdmiSource::HDMI1) return "HDMI1";
+    else if (source == HdmiSource::HDMI2) return "HDMI2";
     else return "INVALID";
 }
 
-Mux::Source Mux::getSourceEnumfromString(String source)
+HdmiSource Mux::getSourceEnumfromString(String source)
 {
-    if (source == "HDMI1") return Mux::Source::HDMI1;
-    else if (source == "HDMI2") return Mux::Source::HDMI2;
-    else return Mux::Source::INVALID;
+    if (source == "HDMI1") return HdmiSource::HDMI1;
+    else if (source == "HDMI2") return HdmiSource::HDMI2;
+    else return HdmiSource::INVALID;
 }
 
 void Mux::init()

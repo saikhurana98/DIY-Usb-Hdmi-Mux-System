@@ -3,28 +3,24 @@
 #include <Arduino.h>
 #include <TaskSchedulerDeclarations.h>
 #include <ArduinoJson.h>
+#include "config.hpp"
 
 class Mux
 {
 public:
-    enum Source
-    {
-        INVALID,
-        HDMI1,
-        HDMI2
-    };
+    
    
     String channel;
-    Source currentSource;
-    Source requestedSource;
-    Source defaultSource;
-    String getSourceStringFromEnum(Source source);
-    Source getSourceEnumfromString(String source);
-    Source getDefaultSourceConfig();
-    void setDefaultSourceConfig(Source source);
-    void switchSource(Source source);
+    HdmiSource currentSource;
+    HdmiSource requestedSource;
+    HdmiSource defaultSource;
+    String getSourceStringFromEnum(HdmiSource source);
+    HdmiSource getSourceEnumfromString(String source);
+    HdmiSource getDefaultSourceConfig();
+    void setDefaultSourceConfig(HdmiSource source);
+    void switchSource(HdmiSource source);
     void switchSource(String source);
-    Source getCurrentSource();
+    HdmiSource getCurrentSource();
     void init();
     void runtime();
     bool errorFlag = false;
@@ -36,6 +32,6 @@ private:
     int sensePin;
     long long retryTimeout;
     long long requestedTimestamp;
-    Source getPinState();
+    HdmiSource getPinState();
     void setPinState(bool pinState);
 };
