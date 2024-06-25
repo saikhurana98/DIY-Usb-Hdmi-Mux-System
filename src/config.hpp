@@ -12,6 +12,8 @@ typedef struct
     double baudRate;
 } SerialConfig;
 
+typedef std::map<String, pair<int, int>> HdmiChannelPinout;
+
 class Config
 {
 public:
@@ -40,13 +42,13 @@ public:
         {RestoreMode::CUSTOM, "CUSTOM"},
     };
     SerialConfig serialConfig;
-    std::map<String, pair<int, int>> hdmiChannelPinouts;
+    HdmiChannelPinout *hdmiChannelPinouts;
     std::map<String, HdmiSource> restoreState;
     RestoreMode currentRestoreMode;
     void addHdmiPinout(String channelId, int trigPin, int sensePin);
     void load();
     void save();
-    Config(int serialTxPin, int serialRxPin, double baud, RestoreMode restoreMode);
+    Config(int serialRxPin , int serialTxPin , double baud , HdmiChannelPinout &pinout , RestoreMode restoreMode);
 
 private:
 };
