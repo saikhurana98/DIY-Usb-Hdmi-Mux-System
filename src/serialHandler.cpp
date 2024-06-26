@@ -1,5 +1,4 @@
 #include "serialHandler.hpp"
-
 JsonDocument SerialHandler::getSource(JsonDocument &payload)
 {
     String channel = payload["payload"]["channel"];
@@ -23,20 +22,14 @@ JsonDocument SerialHandler::getSourceMulti(JsonDocument &payload)
 
 void SerialHandler::setSource(JsonDocument &payload)
 {
-    String channel = payload["payload"].as<JsonPair>() .key().c_str();
-    String source = payload["payload"].as<JsonPair>().value().as<const char*>();
-    this->hdmiHandler->setSourceByString(channel,source);
-}
+    JsonObject channels = payload["payload"].as<JsonObject>();
 
-void SerialHandler::setSourceMulti(JsonDocument &payload)
-{
-    JsonObject channels = payload["payload"]["channels"].as<JsonObject>();
-    
-    for (JsonPair channel_source : channels) {
+    for (JsonPair channel_source : channels)
+    {
         String channel = channel_source.key().c_str();
-        String source = channel_source.value().as<const char*>();
+        String source = channel_source.value().as<const char *>();
 
-        this->hdmiHandler->setSourceByString(channel,source);
+        this->hdmiHandler->setSourceByString(channel, source);
     }
 }
 
@@ -69,11 +62,6 @@ void SerialHandler::runtime()
                 this->setSource(serialJson);
                 // wait here and get updated state
             }
-            else if (serialJson["cmd"] == "SET_SOURCE_MULTI")
-            {
-                this->setSourceMulti(serialJson);
-                // wait here and get updated state
-            }
             else
             {
                 returnPayload["res"] = false;
@@ -95,6 +83,11 @@ void SerialHandler::runtime()
     }
 }
 
+Task *SerialHandler::getTask()
+{
+    return new Task(TASK_IMMEDIATE, TASK_FOREVER, [this]()
+                    { this->runtime(); });
+}
 
 void SerialHandler::init()
 {
@@ -105,11 +98,11 @@ void SerialHandler::init()
     serial->print("Serial Ready");
 }
 
-SerialHandler::SerialHandler(int rxPin, int txPin, double baud, HdmiHandler &hdmiHandler ,SerialUART &serial)
+SerialHandler::SerialHandler(Config &config, HdmiHandler &hdmiHandler, SerialUART &serial)
 {
     this->serial = &serial;
     this->hdmiHandler = &hdmiHandler;
-    this->rxPin = rxPin;
-    this->txPin = txPin;
-    this->baud = baud;
+    this->rxPin = config.serialConfig.rxPin;
+    this->txPin = config.serialConfig.txPin;
+    this->baud = config.serialConfig.baudRate;
 }

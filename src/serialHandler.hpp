@@ -9,7 +9,6 @@ private:
     SerialUART *serial;
     void setSource(JsonDocument &payload);
     JsonDocument getSource(JsonDocument &payload);
-    void setSourceMulti(JsonDocument &payload);
     JsonDocument getSourceMulti(JsonDocument &payload);
     int rxPin;
     int txPin;
@@ -17,5 +16,6 @@ private:
 public:
     void runtime();
     void init();
-    SerialHandler(int rxPin, int txPin, double baud, HdmiHandler &hdmiHandler ,SerialUART &serial);
+    Task * getTask();
+    SerialHandler(Config &config ,HdmiHandler &hdmiHandler ,SerialUART &serial);
 };

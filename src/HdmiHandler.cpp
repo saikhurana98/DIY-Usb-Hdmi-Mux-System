@@ -47,3 +47,24 @@ void HdmiHandler::setBootRestoreMode(RestoreMode mode)
 {
     this->appConfig->currentRestoreMode = mode;
 }
+
+std::vector<Task *> HdmiHandler::getJobs()
+{
+    std::vector<Task *> jobs;
+
+    if (this->channelMuxMap.size() == 0) {
+        Serial.printf("No Tasks were generated");
+    } 
+
+    for (auto channel_mux : this->channelMuxMap)
+    {
+        jobs.push_back(
+            new Task(TASK_IMMEDIATE,TASK_ONCE,[channel_mux](){
+                channel_mux.second->runtime();
+            })
+        );
+    }
+
+    return jobs;
+}
+

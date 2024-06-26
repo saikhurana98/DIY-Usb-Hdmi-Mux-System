@@ -1,15 +1,19 @@
 #pragma once
 
 #include <Arduino.h>
+
+#define _TASK_STD_FUNCTION
+
+#define ARDUINO_ARCH_STM32
 #include <TaskSchedulerDeclarations.h>
+#undef ARDUIONO_ARCH_STM32
+
 #include <ArduinoJson.h>
 #include "config.hpp"
 
 class Mux
 {
 public:
-    
-   
     String channel;
     HdmiSource currentSource;
     HdmiSource requestedSource;
@@ -24,8 +28,7 @@ public:
     void init();
     void runtime();
     bool errorFlag = false;
-    Mux(String channel,int trig_pin, int sense_pin,long long retryTimeout);
-
+    Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout);
 
 private:
     int trigPin;
