@@ -11,15 +11,6 @@ Config::Config(int serialRxPin, int serialTxPin, double baud, HdmiChannelPinoutM
 void Config::init()
 {
     this->load();
-
-    if (this->currentRestoreMode == RestoreMode::NONE)
-    {
-        for (auto const &key_val : *hdmiChannelPinouts)
-        {
-            this->restoreState[key_val.first.c_str()] = HdmiSource::HDMI1;
-        }
-    }
-
     this->save();
 }
 
@@ -39,10 +30,13 @@ void Config::save()
     }
 
     JsonDocument configJson;
+    configJson["restoreMode"] = this->RestoreModeEnumToString[this->currentRestoreMode];
 
     for (auto const &key_val : restoreState)
     {
-        configJson["config"]["restoreState"][key_val.first.c_str()] = this->hdmiSourceStringMap[key_val.second];
+        auto source = this->currentRestoreMode == RestoreMode::NONE ? HdmiSource::HDMI2 : key_val.second;
+
+        configJson["config"]["restoreState"][key_val.first.c_str()] = this->hdmiSourceStringMap[source];
     }
 
     Serial.printf("Saving Json!!\n");
@@ -73,11 +67,11 @@ void Config::load()
         Serial.printf("Config File Not Opened!\n");
     }
 
-    JsonDocument doc;
-    DeserializationError err = deserializeJson(doc, configFilehandle);
+    JsonDocument configJson;
+    DeserializationError err = deserializeJson(configJson, configFilehandle);
     Serial.printf("Reading Json: Err: %s \n", err ? "Yes" : "No");
 
-    serializeJsonPretty(doc, Serial);
+    serializeJsonPretty(configJson, Serial);
 
     configFilehandle.close();
     if (err)
@@ -86,18 +80,22 @@ void Config::load()
         return;
     }
 
-    for (JsonPair key_value : doc["config"]["restoreState"].as<JsonObject>())
+    if (configJson["config"].containsKey("restoreMode"))
+    {
+        this->currentRestoreMode = this->RestoreModeStringToEnum[configJson["config"]["restoreMode"].as<String>().c_str()];
+    }
+
+    for (JsonPair key_value : configJson["config"]["restoreState"].as<JsonObject>())
     {
         this->restoreState[key_value.key().c_str()] = this->hdmiStringSourceMap[key_value.value().as<String>().c_str()];
     }
 }
 
-void Config::addHdmiPinout(String channelId, int trigPin, int sensePin)
+void Config::setRestoreState(RestoreMode mode, HdmiChannelSourceMap map)
 {
-    this->hdmiChannelPinouts[0][channelId] = make_pair(trigPin, sensePin);
-
-    if (this->currentRestoreMode = RestoreMode::NONE)
-    {
-        this->restoreState[channelId] = HdmiSource::HDMI1;
+    this->currentRestoreMode = mode;
+    if (currentRestoreMode == RestoreMode::CUSTOM) {
+        this->restoreState = map;
     }
+    this->save();
 }

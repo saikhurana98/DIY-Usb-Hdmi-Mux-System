@@ -27,7 +27,7 @@ enum HdmiSource
 enum RestoreMode
 {
     NONE,
-    LAST_STATE,
+    RESTORE_PREVIOUS,
     CUSTOM
 };
 
@@ -46,15 +46,21 @@ public:
         {"HDMI1", HdmiSource::HDMI1},
         {"HDMI2", HdmiSource::HDMI2},
     };
-    std::map<RestoreMode, String> RestoreModeStringMap = {
+    std::map<RestoreMode, String> RestoreModeEnumToString = {
         {RestoreMode::NONE, "NONE"},
-        {RestoreMode::LAST_STATE, "LAST_STATE"},
+        {RestoreMode::RESTORE_PREVIOUS, "RESTORE_PREVIOUS"},
         {RestoreMode::CUSTOM, "CUSTOM"},
+    };
+    std::map<String, RestoreMode> RestoreModeStringToEnum = {
+        {"NONE",RestoreMode::NONE},
+        {"RESTORE_PREVIOUS",RestoreMode::RESTORE_PREVIOUS},
+        {"CUSTOM",RestoreMode::CUSTOM},
     };
     SerialConfig serialConfig;
     HdmiChannelPinoutMap *hdmiChannelPinouts;
     HdmiChannelSourceMap restoreState;
     RestoreMode currentRestoreMode;
+    void setRestoreState(RestoreMode mode, HdmiChannelSourceMap map);
     void addHdmiPinout(String channelId, int trigPin, int sensePin);
     void init();
     Config(int serialRxPin, int serialTxPin, double baud, HdmiChannelPinoutMap &pinout, RestoreMode restoreMode);

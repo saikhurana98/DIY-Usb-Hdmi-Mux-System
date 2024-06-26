@@ -21,7 +21,9 @@ SerialHandler *serialHandler = new SerialHandler(*appConfig, *hdmiHandler, Seria
 void setup()
 {
     Serial.begin(115200);
+
     appConfig->init();
+    hdmiHandler->init();
     serialHandler->init();
 
     std::vector<Task *> jobs;
@@ -33,6 +35,7 @@ void setup()
 
     for (auto job :jobs) {
         userScheduler->addTask(*job);
+        job->enable();
     }
 }
 

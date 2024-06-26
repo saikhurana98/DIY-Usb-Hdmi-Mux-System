@@ -1,5 +1,6 @@
 {
     "config": {
+        "restoreMode": ["NONE","RESTORE_PREVIOUS","CUSTOM"],
         "restoreState": {
             "A": "HDMI1",
             "B": "HDMI2",

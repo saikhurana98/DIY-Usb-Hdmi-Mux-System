@@ -29,10 +29,9 @@ public:
     void runtime();
     bool errorFlag = false;
     Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout);
-
-private:
     int trigPin;
     int sensePin;
+private:
     long long retryTimeout;
     long long requestedTimestamp;
     HdmiSource getPinState();

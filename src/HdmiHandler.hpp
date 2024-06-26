@@ -13,10 +13,14 @@ private:
 public:
     std::vector<Task *> getJobs();
     Mux *getMuxById(String channelId);
-    void setBootRestoreMode(RestoreMode mode);
+    void setBootRestoreMode(RestoreMode mode, HdmiChannelSourceMap map);
+    void setBootRestoreMode(String mode, JsonDocument map);
     void setSource(String channel, HdmiSource source);
-    void setSourceByString(String channel, String source);
+    void setSource(String channel, String source);
+    void printConfig(HardwareSerial &serial);
+    void init();
     String getSourceString(String channel);
     HdmiSource getSource(String channel);
+    void runtime();
     HdmiHandler(Config &config);
 };

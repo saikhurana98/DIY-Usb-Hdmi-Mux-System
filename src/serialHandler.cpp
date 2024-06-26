@@ -4,6 +4,7 @@ JsonDocument SerialHandler::getSource(JsonDocument &payload)
     String channel = payload["payload"]["channel"];
     JsonDocument returnPayload;
     returnPayload[channel] = this->hdmiHandler->getSourceString(channel);
+    serializeJsonPretty(returnPayload, *(this->serial));
     return returnPayload;
 }
 JsonDocument SerialHandler::getSourceMulti(JsonDocument &payload)
@@ -29,10 +30,16 @@ void SerialHandler::setSource(JsonDocument &payload)
         String channel = channel_source.key().c_str();
         String source = channel_source.value().as<const char *>();
 
-        this->hdmiHandler->setSourceByString(channel, source);
+        this->hdmiHandler->setSource(channel, source);
     }
 }
 
+void SerialHandler::setRestoreMode(JsonDocument &payload)
+{
+    String mode = payload["mode"].as<String>();
+    JsonObject states = payload["payload"];
+    this->hdmiHandler->setBootRestoreMode(mode,states);
+}
 void SerialHandler::runtime()
 {
     auto serial = this->serial;
@@ -43,7 +50,8 @@ void SerialHandler::runtime()
         JsonDocument serialJson;
         JsonDocument outputJson;
         deserializeJson(serialJson, serialJsonStringified);
-
+        serializeJsonPretty(serialJson,*(this->serial));
+        this->hdmiHandler->printConfig(*(this->serial));
         JsonDocument returnPayload;
         returnPayload["res"] = true;
         if (serialJson.containsKey("cmd"))
@@ -61,6 +69,9 @@ void SerialHandler::runtime()
             {
                 this->setSource(serialJson);
                 // wait here and get updated state
+            } else if (serialJson["cmd"] == "SET_RESTORE_MODE")
+            {
+                this->setRestoreMode(serialJson);
             }
             else
             {

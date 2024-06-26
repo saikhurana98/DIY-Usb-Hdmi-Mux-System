@@ -24,24 +24,13 @@
         },
         {
             "cmd":"SET_RESTORE_MODE",
-            "state": "NONE"
-            // "state": "LAST_STATE"
-            // "state": "CUSTOM"
-            // "channels": [
-            //         {
-            //             "channel": "A",
-            //             "source": "HDMI1"
-            //         },
-            //         {
-            //             "channel": "B",
-            //             "source": "HDMI2"
-            //         },
-            //         {
-            //             "channel": "C",
-            //             "source": "HDMI1"
-            //         }
-            //     ]
+            "mode": "NONE",
+            "payload": {
+                "A": "HDMI1",
+                "B": "HDMI1",
+                "C": "HDMI1"
 
+            }
         }
     ]
 }
