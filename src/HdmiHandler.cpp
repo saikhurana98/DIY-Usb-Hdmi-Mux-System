@@ -16,7 +16,6 @@ Mux *HdmiHandler::getMuxById(String channelId)
 {
     if (this->channelMuxMap.count(channelId) != 1)
     {
-        Serial1.printf("Mux with Channel : %s Not found", channelId);
         return NULL;
     }
     return this->channelMuxMap[channelId];
@@ -56,11 +55,6 @@ void HdmiHandler::setBootRestoreMode(RestoreMode mode, HdmiChannelSourceMap map)
 }
 void HdmiHandler::setBootRestoreMode(String mode, JsonDocument map)
 {
-
-    Serial1.printf("HdmiHandler: setBootRestoreMode Called with mode: %s, map: ", mode.c_str());
-    serializeJson(map,Serial1);
-
-
     auto restoreMode = RestoreModeStringToEnum[mode.c_str()];
     HdmiChannelSourceMap sourceMap;
 
@@ -105,7 +99,7 @@ std::vector<Task *> HdmiHandler::getJobs()
             new Task(TASK_IMMEDIATE, TASK_FOREVER, [channel_mux]()
                      { channel_mux.second->runtime(); }));
     }
-    
+
     if (this->appConfig->currentRestoreMode != RestoreMode::NONE) 
     {
         jobs.push_back(

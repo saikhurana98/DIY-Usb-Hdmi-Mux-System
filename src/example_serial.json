@@ -26,11 +26,13 @@
         },
         {
             "cmd": "SET_RESTORE_MODE",
-            "mode": "CUSTOM",
-            "restoreState": {
-                "A": "HDMI1",
-                "B": "HDMI2",
-                "C": "HDMI1"
+            "payload": {
+                "mode": "CUSTOM",
+                "restoreState": {
+                    "A": "HDMI1",
+                    "B": "HDMI2",
+                    "C": "HDMI1"
+                }
             }
         }
     ]

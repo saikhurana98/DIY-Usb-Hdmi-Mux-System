@@ -20,8 +20,14 @@ SerialHandler *serialHandler = new SerialHandler(*appConfig, *hdmiHandler, Seria
 
 void setup()
 {
-    delay(5000);
     serialHandler->init();
+    Serial1.printf("Booting");
+    double start = millis();
+    while ((millis() - start) < 5000) {
+
+        delay(750);
+        Serial1.printf(".");
+    }
     appConfig->init();
     hdmiHandler->init();
 

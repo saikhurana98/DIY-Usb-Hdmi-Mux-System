@@ -23,9 +23,6 @@ std::map<String, RestoreMode> RestoreModeStringToEnum = {
     {"CUSTOM", RestoreMode::CUSTOM},
 };
 
-
-
-
 Config::Config(int serialRxPin, int serialTxPin, double baud, HdmiChannelPinoutMap &pinouts, RestoreMode restoreMode)
 {
     this->serialConfig.baudRate = baud;
@@ -42,12 +39,25 @@ void Config::init()
     LittleFS.begin();
     Serial1.println("Config init");
     this->load();
-    this->save();
+
+
+    // if restored incorrectly
+    if (this->restoreState.size() != this->hdmiChannelPinouts->size()) 
+    {
+        this->currentRestoreMode = RestoreMode::NONE;
+        for (auto channel_pinout : *this->hdmiChannelPinouts)
+        {
+            String channel  = channel_pinout.first;
+            this->restoreState[channel] = HdmiSource::HDMI2;
+        }
+        this->save();
+    }
+
+
 }
 
 void Config::save()
 {
-    Serial1.printf("Saving the file at %s\n", this->flashConfigFilename.c_str());
     if (!LittleFS.exists(this->flashConfigFilename.c_str()))
     {
         Serial1.printf("%s not found \n", this->flashConfigFilename.c_str());
@@ -67,23 +77,20 @@ void Config::save()
     for (auto const &key_val : restoreState)
     {
         auto source = this->currentRestoreMode == RestoreMode::NONE ? HdmiSource::HDMI2 : key_val.second;
-
         configJson["config"]["restoreState"][key_val.first.c_str()] = hdmiSourceStringMap[source];
     }
 
-    Serial1.printf("Saving Json!!\n");
-    serializeJsonPretty(configJson, Serial1);
     if (!serializeJson(configJson, configFilehandle))
     {
         Serial1.printf("Failed to write to file");
     }
+    Serial.printf("Config Saved!\n");
     configFilehandle.close();
 }
 
 void Config::load()
 {
-    
-    Serial1.printf("Loading the file at %s", this->flashConfigFilename.c_str());
+
     if (!LittleFS.exists(this->flashConfigFilename.c_str()))
     {
         Serial1.printf("%s not found \n", this->flashConfigFilename.c_str());
@@ -98,8 +105,7 @@ void Config::load()
 
     JsonDocument configJson;
     DeserializationError err = deserializeJson(configJson, configFilehandle);
-    Serial1.printf("Reading Json: Err: %s \n", err ? "Yes" : "No");
-
+    Serial1.printf("Config Loaded!\n");
     serializeJsonPretty(configJson, Serial1);
 
     configFilehandle.close();
@@ -108,12 +114,10 @@ void Config::load()
         Serial1.printf("Failed to read file, using default config\n");
         return;
     }
-
     if (configJson["config"].containsKey("restoreMode"))
     {
         this->currentRestoreMode = RestoreModeStringToEnum[configJson["config"]["restoreMode"].as<String>().c_str()];
     }
-
     for (JsonPair key_value : configJson["config"]["restoreState"].as<JsonObject>())
     {
         this->restoreState[key_value.key().c_str()] = hdmiStringSourceMap[key_value.value().as<String>().c_str()];
@@ -123,7 +127,8 @@ void Config::load()
 void Config::setRestoreState(RestoreMode mode, HdmiChannelSourceMap map)
 {
     this->currentRestoreMode = mode;
-    if (this->currentRestoreMode == RestoreMode::CUSTOM) {
+    if (this->currentRestoreMode == RestoreMode::CUSTOM)
+    {
         this->restoreState = map;
     }
     this->save();
