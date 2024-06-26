@@ -42,9 +42,8 @@ public:
     void addHdmiPinout(String channelId, int trigPin, int sensePin);
     void init();
     Config(int serialRxPin, int serialTxPin, double baud, HdmiChannelPinoutMap &pinout, RestoreMode restoreMode);
-
 private:
     String flashConfigFilename = "/config.json";
-    void load();
     void save();
+    void load();
 };

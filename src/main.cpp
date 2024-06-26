@@ -23,7 +23,7 @@ void setup()
     serialHandler->init();
     Serial1.printf("Booting");
     double start = millis();
-    while ((millis() - start) < 5000) {
+    while ((millis() - start) < 2000) {
 
         delay(750);
         Serial1.printf(".");
