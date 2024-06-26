@@ -1,9 +1,11 @@
-#pragma once
 
 #include <Arduino.h>
 #include "mux.hpp"
-#include "config.hpp"
 
+
+extern std::map<HdmiSource, String> hdmiSourceStringMap;
+extern std::map<RestoreMode, String> RestoreModeEnumToString;
+extern std::map<String, RestoreMode> RestoreModeStringToEnum;
 class HdmiHandler
 {
 private:

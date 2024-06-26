@@ -20,11 +20,10 @@ SerialHandler *serialHandler = new SerialHandler(*appConfig, *hdmiHandler, Seria
 
 void setup()
 {
-    Serial.begin(115200);
-
+    delay(5000);
+    serialHandler->init();
     appConfig->init();
     hdmiHandler->init();
-    serialHandler->init();
 
     std::vector<Task *> jobs;
 

@@ -1,5 +1,4 @@
 #include "mux.hpp"
-#include "LittleFS.h"
 
 void pulse(int trig_pin, bool state)
 {
@@ -8,13 +7,12 @@ void pulse(int trig_pin, bool state)
 
 
 
-Mux::Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout, Config &config)
+Mux::Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout)
 {
     this->channel = channel;
     this->trigPin = trig_pin;
     this->sensePin = sense_pin;
     this->retryTimeout = retryTimeout;
-    this->config = &config;
 }
 
 HdmiSource Mux::getPinState()
@@ -30,7 +28,7 @@ void Mux::switchSource(HdmiSource source)
 }
 void Mux::switchSource(String source)
 {
-    HdmiSource sourceEnum = this->config->hdmiStringSourceMap[source];
+    HdmiSource sourceEnum = hdmiStringSourceMap[source];
     if (sourceEnum == HdmiSource::INVALID) return;
     this->requestedSource = sourceEnum;
     this->requestedTimestamp = millis();

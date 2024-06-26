@@ -36,9 +36,11 @@ void SerialHandler::setSource(JsonDocument &payload)
 
 void SerialHandler::setRestoreMode(JsonDocument &payload)
 {
-    String mode = payload["mode"].as<String>();
-    JsonObject states = payload["payload"];
+    String mode = payload["mode"];
+    JsonObject states = payload["payload"]["restoreState"];
     this->hdmiHandler->setBootRestoreMode(mode,states);
+
+
 }
 void SerialHandler::runtime()
 {
@@ -107,14 +109,6 @@ void SerialHandler::init()
     serial->print("Serial Ready");
 }
 
-String getConfig() 
-{
-    String buff;
-    // buff += ;
-
-
-    return buff;
-}
 
 SerialHandler::SerialHandler(Config &config, HdmiHandler &hdmiHandler, SerialUART &serial)
 {
