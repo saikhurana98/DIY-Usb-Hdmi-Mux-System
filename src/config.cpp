@@ -44,6 +44,7 @@ void Config::init()
     // if restored incorrectly
     if (this->restoreState.size() != this->hdmiChannelPinouts->size()) 
     {
+        Serial1.print("Config Incorrectly Loaded, Resetting... ");
         this->currentRestoreMode = RestoreMode::NONE;
         for (auto channel_pinout : *this->hdmiChannelPinouts)
         {
@@ -51,6 +52,8 @@ void Config::init()
             this->restoreState[channel] = HdmiSource::HDMI2;
         }
         this->save();
+        Serial1.print("\nDone!! Rebooting...\n");
+        rp2040.reboot();
     }
 
 
