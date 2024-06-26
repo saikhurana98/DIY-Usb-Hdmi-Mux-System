@@ -1,22 +1,24 @@
+
 #include <Arduino.h>
-#include <mux.hpp>
 #include <ArduinoJson.h>
+#include "HdmiHandler.hpp"
 
 class SerialHandler
 {
 private:
-    Mux **mux_arr;
-    SerialUART *serial;
+    HdmiHandler *hdmiHandler;
     void setSource(JsonDocument &payload);
     JsonDocument getSource(JsonDocument &payload);
-    void setSourceMulti(JsonDocument &payload);
     JsonDocument getSourceMulti(JsonDocument &payload);
-    Mux *findMuxByChannel(String id);
+    void setRestoreMode(JsonDocument &payload);
+    String getConfig();
     int rxPin;
     int txPin;
     double baud;
 public:
+    SerialUART *serial;
     void runtime();
     void init();
-    SerialHandler(int rxPin, int txPin, double baud, Mux* muxArr[],SerialUART &serial);
+    Task * getTask();
+    SerialHandler(Config &config ,HdmiHandler &hdmiHandler ,SerialUART &serial);
 };

@@ -1,36 +1,38 @@
-#pragma once
 
 #include <Arduino.h>
-#include <TaskSchedulerDeclarations.h>
 
+#define _TASK_STD_FUNCTION
+
+#define ARDUINO_ARCH_STM32
+#include <TaskSchedulerDeclarations.h>
+#undef ARDUIONO_ARCH_STM32
+
+#include <ArduinoJson.h>
+#include "LittleFS.h"
+#include "config.hpp"
+
+
+extern std::map<HdmiSource, String> hdmiSourceStringMap;
+extern HdmiChannelSourceMap hdmiStringSourceMap;
 class Mux
 {
 public:
-    enum Source
-    {
-        INVALID,
-        HDMI1,
-        HDMI2
-    };
     String channel;
-    Source currentSource;
-    Source requestedSource;
-    String getSourceStringFromEnum(Source source);
-    Source getSourceEnumfromString(String source);
-    void switchSource(Source source);
-    void switchSource(String source);
-    Source getCurrentSource();
-    void init();
-    void runtime();
+    HdmiSource currentSource;
+    HdmiSource requestedSource;
     bool errorFlag = false;
-    Mux(String channel,int trig_pin, int sense_pin,long long retryTimeout);
-
-
-private:
     int trigPin;
     int sensePin;
+    void init();
+    void runtime();
+    HdmiSource getCurrentSource();
+    void switchSource(HdmiSource source);
+    void switchSource(String source);
+    Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout);
+
+private:
     long long retryTimeout;
     long long requestedTimestamp;
-    Source getPinState();
+    HdmiSource getPinState();
     void setPinState(bool pinState);
 };

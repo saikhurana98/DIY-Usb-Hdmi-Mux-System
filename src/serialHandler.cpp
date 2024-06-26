@@ -1,59 +1,47 @@
 #include "serialHandler.hpp"
-
 JsonDocument SerialHandler::getSource(JsonDocument &payload)
 {
     String channel = payload["payload"]["channel"];
-    Mux *foundMux = this->findMuxByChannel(channel);
     JsonDocument returnPayload;
-    if (foundMux == NULL) {
-        returnPayload["res"] = false;
-        return returnPayload;
-    }
-    returnPayload["channel"] = channel;
-    returnPayload["source"] = foundMux->getSourceStringFromEnum(foundMux->getCurrentSource());
+    returnPayload[channel] = this->hdmiHandler->getSourceString(channel);
+    serializeJsonPretty(returnPayload, *(this->serial));
     return returnPayload;
 }
 JsonDocument SerialHandler::getSourceMulti(JsonDocument &payload)
 {
-    JsonArray channelsArray = payload["payload"]["channels"].as<JsonArray>();
     JsonDocument returnPaylod;
-    JsonDocument buffer;
-    JsonArray results = buffer.to<JsonArray>();
 
-    for (JsonVariant channel : channelsArray)
+    for (JsonVariant channel : payload["payload"]["channels"].as<JsonArray>())
     {
         String channelString = channel.as<String>();
         channelString.replace("\"", "");
-        JsonDocument reqPayload;
-        reqPayload["payload"]["channel"] = channelString;
-        results.add(this->getSource(reqPayload));
+        returnPaylod["payload"][channelString] = this->hdmiHandler->getSourceString(channel);
     }
 
-    returnPaylod["payload"] = results;
     return returnPaylod;
 }
 
 void SerialHandler::setSource(JsonDocument &payload)
 {
-    String channel = payload["payload"]["channel"];
-    Mux *foundMux = this->findMuxByChannel(channel);
-    if (foundMux == NULL)
-        return;
-    foundMux->switchSource(payload["payload"]["source"].as<String>());
-    return;
-}
+    JsonObject channels = payload["payload"].as<JsonObject>();
 
-void SerialHandler::setSourceMulti(JsonDocument &payload)
-{
-    JsonArray channelsArray = payload["payload"]["channels"].as<JsonArray>();
-    for (JsonDocument channel : channelsArray)
+    for (JsonPair channel_source : channels)
     {
-        JsonDocument doc;
-        doc["payload"] = channel;
-        this->setSource(doc);
+        String channel = channel_source.key().c_str();
+        String source = channel_source.value().as<const char *>();
+
+        this->hdmiHandler->setSource(channel, source);
     }
 }
 
+void SerialHandler::setRestoreMode(JsonDocument &payload)
+{
+    String mode = payload["payload"]["mode"];
+    JsonObject states =  payload["payload"]["restoreState"];
+    this->hdmiHandler->setBootRestoreMode(mode,states);
+
+
+}
 void SerialHandler::runtime()
 {
     auto serial = this->serial;
@@ -64,7 +52,6 @@ void SerialHandler::runtime()
         JsonDocument serialJson;
         JsonDocument outputJson;
         deserializeJson(serialJson, serialJsonStringified);
-
         JsonDocument returnPayload;
         returnPayload["res"] = true;
         if (serialJson.containsKey("cmd"))
@@ -82,11 +69,9 @@ void SerialHandler::runtime()
             {
                 this->setSource(serialJson);
                 // wait here and get updated state
-            }
-            else if (serialJson["cmd"] == "SET_SOURCE_MULTI")
+            } else if (serialJson["cmd"] == "SET_RESTORE_MODE")
             {
-                this->setSourceMulti(serialJson);
-                // wait here and get updated state
+                this->setRestoreMode(serialJson);
             }
             else
             {
@@ -109,16 +94,10 @@ void SerialHandler::runtime()
     }
 }
 
-Mux *SerialHandler::findMuxByChannel(String channel)
+Task *SerialHandler::getTask()
 {
-    for (int i = 0; this->mux_arr[i] != NULL; i++)
-    {
-        if (this->mux_arr[i]->channel == channel)
-        {
-            return this->mux_arr[i];
-        }
-    }
-    return NULL;
+    return new Task(TASK_IMMEDIATE, TASK_FOREVER, [this]()
+                    { this->runtime(); });
 }
 
 void SerialHandler::init()
@@ -127,14 +106,14 @@ void SerialHandler::init()
     serial->setRX(this->rxPin);
     serial->setTX(this->txPin);
     serial->begin(this->baud);
-    serial->print("Serial Ready");
 }
 
-SerialHandler::SerialHandler(int rxPin, int txPin, double baud, Mux *muxArr[], SerialUART &serial)
+
+SerialHandler::SerialHandler(Config &config, HdmiHandler &hdmiHandler, SerialUART &serial)
 {
     this->serial = &serial;
-    this->mux_arr = muxArr;
-    this->rxPin = rxPin;
-    this->txPin = txPin;
-    this->baud = baud;
+    this->hdmiHandler = &hdmiHandler;
+    this->rxPin = config.serialConfig.rxPin;
+    this->txPin = config.serialConfig.txPin;
+    this->baud = config.serialConfig.baudRate;
 }

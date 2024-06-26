@@ -2,7 +2,7 @@
 
 void pulse(int trig_pin, bool state)
 {
-    digitalWrite(trig_pin, state ? HIGH : LOW);
+    digitalWrite(trig_pin, state);
 }
 
 
@@ -15,42 +15,29 @@ Mux::Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout)
     this->retryTimeout = retryTimeout;
 }
 
-Mux::Source Mux::getPinState()
+HdmiSource Mux::getPinState()
 {
-    return digitalRead(this->sensePin) == HIGH ? HDMI1 : HDMI2;
+    return digitalRead(this->sensePin) == HIGH ? HdmiSource::HDMI1 : HdmiSource::HDMI2;
 }
 
-void Mux::switchSource(Source source)
+void Mux::switchSource(HdmiSource source)
 {
-    if (source == INVALID) return;
+    if (source == HdmiSource::INVALID) return;
     this->requestedSource = source;
     this->requestedTimestamp = millis();
 }
 void Mux::switchSource(String source)
 {
-    Source sourceEnum = this->getSourceEnumfromString(source);
-    if (sourceEnum == INVALID) return;
+    HdmiSource sourceEnum = hdmiStringSourceMap[source];
+    if (sourceEnum == HdmiSource::INVALID) return;
     this->requestedSource = sourceEnum;
     this->requestedTimestamp = millis();
 }
-Mux::Source Mux::getCurrentSource()
+HdmiSource Mux::getCurrentSource()
 {
     return this->currentSource;
 }
 
-String Mux::getSourceStringFromEnum(Source source)
-{
-    if (source == Mux::Source::HDMI1) return "HDMI1";
-    else if (source == Mux::Source::HDMI2) return "HDMI2";
-    else return "INVALID";
-}
-
-Mux::Source Mux::getSourceEnumfromString(String source)
-{
-    if (source == "HDMI1") return Mux::Source::HDMI1;
-    else if (source == "HDMI2") return Mux::Source::HDMI2;
-    else return Mux::Source::INVALID;
-}
 
 void Mux::init()
 {
@@ -90,7 +77,7 @@ void Mux::runtime()
 
 
     this->errorFlag = true;
-    this->currentSource = INVALID;
+    this->currentSource = HdmiSource::INVALID;
 }
 
 void Mux::setPinState(bool pinState)

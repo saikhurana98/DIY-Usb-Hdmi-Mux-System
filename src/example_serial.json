@@ -19,27 +19,26 @@
         {
             "cmd": "SET_SOURCE",
             "payload": {
-                "channel": "A",
-                "source": "HDMI1"
+                "A": "HDMI2",
+                "B": "HDMI2",
+                "C": "HDMI2"
             }
         },
         {
-            "cmd": "SET_SOURCE_MULTI",
+            "cmd": "SET_RESTORE_MODE",
             "payload": {
-                "channels": [
-                    {
-                        "channel": "A",
-                        "source": "HDMI1"
-                    },
-                    {
-                        "channel": "B",
-                        "source": "HDMI2"
-                    },
-                    {
-                        "channel": "C",
-                        "source": "HDMI1"
-                    }
-                ]
+                "mode": "CUSTOM",
+                "restoreState": {
+                    "A": "HDMI1",
+                    "B": "HDMI1",
+                    "C": "HDMI1"
+                }
+            }
+        },
+        {
+            "cmd": "SET_RESTORE_MODE",
+            "payload": {
+                "mode": "RESTORE_PREVIOUS"
             }
         }
     ]

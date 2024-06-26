@@ -1,0 +1,10 @@
+{
+    "config": {
+      "restoreMode": "NONE",
+      "restoreState": {
+        "A": "HDMI1",
+        "B": "HDMI2",
+        "C": "HDMI2"
+      }
+    }
+}

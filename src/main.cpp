@@ -1,54 +1,47 @@
-#include <TaskScheduler.h>
+#define _TASK_STD_FUNCTION
 
-#include "mux.hpp"
+#define ARDUINO_ARCH_STM32 
+#include <TaskScheduler.h>
+#undef ARDUIONO_ARCH_STM32
+
+
 #include "serialHandler.hpp"
+
 Scheduler *userScheduler = new Scheduler();
 
+HdmiChannelPinoutMap hdmiPinout = {
+    {"A", make_pair(9, 10)},
+    {"B", make_pair(18, 19)},
+    {"C", make_pair(8, 20)}};
 
-
-Mux *hdmiMuxArray[3] = {
-    new Mux("A",9, 10, 500),
-    new Mux("B",18, 19, 500),
-    new Mux("C",8, 20, 500)};
-
-SerialHandler *sh = new SerialHandler(13,12,115200,hdmiMuxArray,Serial1);
-
-Task *tasks[] = {
-    new Task(TASK_IMMEDIATE,TASK_FOREVER,[](){ hdmiMuxArray[0]->runtime(); }),
-    new Task(TASK_IMMEDIATE,TASK_FOREVER,[](){ hdmiMuxArray[1]->runtime(); }),
-    new Task(TASK_IMMEDIATE,TASK_FOREVER,[](){ hdmiMuxArray[2]->runtime(); })
-};
-
-Task *taskSerialHandlerRuntime = new Task(TASK_IMMEDIATE,TASK_FOREVER,[](){
-    sh->runtime();
-});
-
-
-Task *driver_task = new Task(TASK_SECOND * 1, TASK_FOREVER, []()
-                            {
-                            });
-
-
+Config *appConfig = new Config(13, 12, 115200, hdmiPinout, RestoreMode::NONE);
+HdmiHandler *hdmiHandler = new  HdmiHandler(*appConfig);
+SerialHandler *serialHandler = new SerialHandler(*appConfig, *hdmiHandler, Serial1);
 
 void setup()
 {
-    
-    sh->init();
+    serialHandler->init();
+    Serial1.printf("Booting");
+    double start = millis();
+    while ((millis() - start) < 2000) {
 
-    for (int i = 0; i < 3 ; i++)
-    {
-        hdmiMuxArray[i]->init();
-        userScheduler->addTask(*tasks[i]);
-        tasks[i]->enable();
+        delay(750);
+        Serial1.printf(".");
     }
-    
-    // userScheduler->addTask(*driver_task);
-    // driver_task->enableDelayed(2000);
+    appConfig->init();
+    hdmiHandler->init();
 
-    userScheduler->addTask(*taskSerialHandlerRuntime);
-    taskSerialHandlerRuntime->enable();
-    
-    userScheduler->startNow();
+    std::vector<Task *> jobs;
+
+    for (auto job :hdmiHandler->getJobs()) {
+        jobs.push_back(job);
+    }
+    jobs.push_back(serialHandler->getTask());
+
+    for (auto job :jobs) {
+        userScheduler->addTask(*job);
+        job->enable();
+    }
 }
 
 void loop()
