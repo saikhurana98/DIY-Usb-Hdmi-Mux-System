@@ -3,27 +3,23 @@
 
 void pulse(int trig_pin, bool state)
 {
-    digitalWrite(trig_pin, state ? HIGH : LOW);
+    digitalWrite(trig_pin, state);
 }
 
 
 
-Mux::Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout)
+Mux::Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout, Config &config)
 {
     this->channel = channel;
     this->trigPin = trig_pin;
     this->sensePin = sense_pin;
     this->retryTimeout = retryTimeout;
+    this->config = &config;
 }
 
 HdmiSource Mux::getPinState()
 {
     return digitalRead(this->sensePin) == HIGH ? HdmiSource::HDMI1 : HdmiSource::HDMI2;
-}
-
-HdmiSource Mux::getDefaultSourceConfig()
-{
-    return this->defaultSource;
 }
 
 void Mux::switchSource(HdmiSource source)
@@ -34,7 +30,7 @@ void Mux::switchSource(HdmiSource source)
 }
 void Mux::switchSource(String source)
 {
-    HdmiSource sourceEnum = this->getSourceEnumfromString(source);
+    HdmiSource sourceEnum = this->config->hdmiStringSourceMap[source];
     if (sourceEnum == HdmiSource::INVALID) return;
     this->requestedSource = sourceEnum;
     this->requestedTimestamp = millis();

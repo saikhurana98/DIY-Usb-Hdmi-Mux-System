@@ -19,7 +19,9 @@
         {
             "cmd": "SET_SOURCE",
             "payload": {
-                "A": "HDMI1"
+                "A": "HDMI2",
+                "B": "HDMI2",
+                "C": "HDMI2"
             }
         },
         {

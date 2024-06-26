@@ -50,8 +50,6 @@ void SerialHandler::runtime()
         JsonDocument serialJson;
         JsonDocument outputJson;
         deserializeJson(serialJson, serialJsonStringified);
-        serializeJsonPretty(serialJson,*(this->serial));
-        this->hdmiHandler->printConfig(*(this->serial));
         JsonDocument returnPayload;
         returnPayload["res"] = true;
         if (serialJson.containsKey("cmd"))
@@ -107,6 +105,15 @@ void SerialHandler::init()
     serial->setTX(this->txPin);
     serial->begin(this->baud);
     serial->print("Serial Ready");
+}
+
+String getConfig() 
+{
+    String buff;
+    // buff += ;
+
+
+    return buff;
 }
 
 SerialHandler::SerialHandler(Config &config, HdmiHandler &hdmiHandler, SerialUART &serial)

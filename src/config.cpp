@@ -57,26 +57,26 @@ void Config::load()
     LittleFS.begin();
     if (!LittleFS.exists(this->flashConfigFilename.c_str()))
     {
-        Serial.printf("%s not found \n", this->flashConfigFilename.c_str());
+        Serial1.printf("%s not found \n", this->flashConfigFilename.c_str());
     }
 
     File configFilehandle = LittleFS.open(this->flashConfigFilename.c_str(), "r+");
 
     if (!configFilehandle)
     {
-        Serial.printf("Config File Not Opened!\n");
+        Serial1.printf("Config File Not Opened!\n");
     }
 
     JsonDocument configJson;
     DeserializationError err = deserializeJson(configJson, configFilehandle);
-    Serial.printf("Reading Json: Err: %s \n", err ? "Yes" : "No");
+    Serial1.printf("Reading Json: Err: %s \n", err ? "Yes" : "No");
 
     serializeJsonPretty(configJson, Serial);
 
     configFilehandle.close();
     if (err)
     {
-        Serial.printf("Failed to read file, using default config\n");
+        Serial1.printf("Failed to read file, using default config\n");
         return;
     }
 

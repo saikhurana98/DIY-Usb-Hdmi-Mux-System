@@ -10,6 +10,7 @@ private:
     JsonDocument getSource(JsonDocument &payload);
     JsonDocument getSourceMulti(JsonDocument &payload);
     void setRestoreMode(JsonDocument &payload);
+    String getConfig();
     int rxPin;
     int txPin;
     double baud;

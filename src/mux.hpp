@@ -17,20 +17,17 @@ public:
     String channel;
     HdmiSource currentSource;
     HdmiSource requestedSource;
-    HdmiSource defaultSource;
-    String getSourceStringFromEnum(HdmiSource source);
-    HdmiSource getSourceEnumfromString(String source);
-    HdmiSource getDefaultSourceConfig();
-    void setDefaultSourceConfig(HdmiSource source);
-    void switchSource(HdmiSource source);
-    void switchSource(String source);
-    HdmiSource getCurrentSource();
-    void init();
-    void runtime();
+    Config *config;
     bool errorFlag = false;
-    Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout);
     int trigPin;
     int sensePin;
+    void init();
+    void runtime();
+    HdmiSource getCurrentSource();
+    void switchSource(HdmiSource source);
+    void switchSource(String source);
+    Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout, Config &config);
+
 private:
     long long retryTimeout;
     long long requestedTimestamp;

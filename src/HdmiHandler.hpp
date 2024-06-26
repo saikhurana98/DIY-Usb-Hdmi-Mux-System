@@ -17,7 +17,6 @@ public:
     void setBootRestoreMode(String mode, JsonDocument map);
     void setSource(String channel, HdmiSource source);
     void setSource(String channel, String source);
-    void printConfig(HardwareSerial &serial);
     void init();
     String getSourceString(String channel);
     HdmiSource getSource(String channel);
