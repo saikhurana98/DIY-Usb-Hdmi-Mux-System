@@ -49,9 +49,28 @@ typedef std::map<String, HdmiSource> HdmiChannelSourceMap;
 class Config
 {
 public:
+    /**
+     * @brief Serial Configuration Parameters
+    */
     SerialConfig serialConfig;
+
+    /**
+     * @brief Reference to a map of Channel id to pinout
+     */
     HdmiChannelPinoutMap *hdmiChannelPinouts;
+
+    /**
+     * @brief State to set the Mux's to on boot. Loaded from flash on boot
+     */
     HdmiChannelSourceMap restoreState;
+
+
+    /**
+     * @brief Current Restore Mode. 
+     * NONE : Restored to HDMI2
+     * CUSTOM : Custom Restore state from flash
+     * RESTORE_PREVIOUS : Restored to the last known boot state
+     */
     RestoreMode currentRestoreMode;
 
     /**
