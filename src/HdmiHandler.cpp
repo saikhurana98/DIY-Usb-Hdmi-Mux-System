@@ -87,13 +87,7 @@ void HdmiHandler::init()
         mux.second->init();
     }
 }
-void HdmiHandler::runtime()
-{
-    if (this->appConfig->currentRestoreMode == RestoreMode::RESTORE_PREVIOUS)
-    {
-        // Track States and keep updating
-    }
-}
+
 
 std::vector<Task *> HdmiHandler::getJobs()
 {
