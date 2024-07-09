@@ -1,75 +1,77 @@
 #include "mux.hpp"
 
- 
-void AbstractMux<HdmiSource, HdmiPinout>::setPinout()
+void TemplateMux<HdmiSource, HdmiPinout>::setPinout()
 {
     // Inputs
-    pinMode(this->pinout.sense,INPUT);
+    pinMode(this->pinout.sense, INPUT);
 
     // Outputs
-    pinMode(this->pinout.trig,OUTPUT);
+    pinMode(this->pinout.trig, OUTPUT);
 }
 
-void AbstractMux<UsbSource, UsbPinout>::setPinout()
+void TemplateMux<UsbSource, UsbPinout>::setPinout()
 {
     // Inputs
-    pinMode(this->pinout.sense1,INPUT);
-    pinMode(this->pinout.sense2,INPUT);
+    pinMode(this->pinout.sense1, INPUT);
+    pinMode(this->pinout.sense2, INPUT);
 
     // Outputs
-    pinMode(this->pinout.trig,OUTPUT);
+    pinMode(this->pinout.trig, OUTPUT);
 }
 
-int AbstractMux<HdmiSource, HdmiPinout>::getSensePinOutput()
+int TemplateMux<HdmiSource, HdmiPinout>::getSensePinOutput()
 {
     return digitalRead(this->pinout.sense) == HIGH ? 1 : 2;
 }
 
-int AbstractMux<UsbSource, UsbPinout>::getSensePinOutput()
+int TemplateMux<UsbSource, UsbPinout>::getSensePinOutput()
 {
     bool sense_1 = digitalRead(this->pinout.sense1);
     bool sense_2 = digitalRead(this->pinout.sense2);
-    if (sense_1) return 1;
-    if (sense_2) return 2;
+    if (sense_1)
+        return 1;
+    if (sense_2)
+        return 2;
     return 0;
 }
 
-bool AbstractMux<HdmiSource, HdmiPinout>::getTrig()
+bool TemplateMux<HdmiSource, HdmiPinout>::getTrig()
 {
     return digitalRead(this->pinout.trig);
 }
-bool AbstractMux<UsbSource, UsbPinout>::getTrig()
+bool TemplateMux<UsbSource, UsbPinout>::getTrig()
 {
     return digitalRead(this->pinout.trig);
 }
 
-void AbstractMux<HdmiSource, HdmiPinout>::setTrig(bool state)
+void TemplateMux<HdmiSource, HdmiPinout>::setTrig(bool state)
 {
-    digitalWrite(this->pinout.trig,state);
+    digitalWrite(this->pinout.trig, state);
 }
 
-void AbstractMux<UsbSource, UsbPinout>::setTrig(bool state)
+void TemplateMux<UsbSource, UsbPinout>::setTrig(bool state)
 {
-    digitalWrite(this->pinout.trig,state);
+    digitalWrite(this->pinout.trig, state);
 }
 
-
-
-
-void Mux::switchSource(String source)
+HdmiSource TemplateMux<HdmiSource, HdmiPinout>::getSourceEnum(String sourceString)
 {
-    HdmiSource sourceEnum = hdmiStringSourceMap[source];
-    if (sourceEnum == HdmiSource::INVALID)
-        return;
-    this->requestedSource = sourceEnum;
-    this->requestedTimestamp = millis();
+    std::map<String, HdmiSource> map = {
+        {"INVALID", HdmiSource::INVALID},
+        {"HDMI1", HdmiSource::HDMI1},
+        {"HDMI2", HdmiSource::HDMI2},
+    };
+
+    return map[sourceString];
 }
 
-
-
-
-
-void Mux::setPinState(bool pinState)
+UsbSource TemplateMux<UsbSource, UsbPinout>::getSourceEnum(String sourceString)
 {
-    digitalWrite(this->trigPin, pinState);
+    std::map<String, UsbSource> map = {
+        {"INVALID", UsbSource::INVALID},
+        {"USB1", UsbSource::USB1},
+        {"USB2", UsbSource::USB2},
+    };
+
+    return map[sourceString];
 }

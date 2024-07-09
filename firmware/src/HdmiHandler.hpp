@@ -17,7 +17,7 @@ private:
     /**
      * @brief Map of Channel Id and their Mux instances
      */
-    std::map<String, Mux *> channelMuxMap;
+    std::map<String, TemplateMux<HdmiSource, HdmiPinout >* > channelMuxMap;
 
     /**
      * @brief Instance of the appConfig
@@ -38,7 +38,7 @@ public:
      * @param channelId 
      * @return Mux* 
      */
-    Mux *getMuxById(String channelId);
+    TemplateMux<HdmiSource, HdmiPinout > *getMuxById(String channelId);
 
     /**
      * @brief Set the Boot Restore Mode and State

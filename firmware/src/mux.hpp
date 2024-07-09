@@ -43,7 +43,7 @@ template <typename GenericSourceType, typename GenericPinout>
  * Manages an individual mux switch. Requests for a state change and then validates it.
  * make sure runtime() is called repeatedly.
  */
-class AbstractMux
+class TemplateMux
 {
 public:
     /**
@@ -101,14 +101,14 @@ public:
             this->currentSource = this->requestedSource;
             this->requestedTimestamp = millis();
             this->setPinState(false);
-            return
+            return;
         }
 
 
         if (!this->getTrig()) 
         {
             this->setTrigHigh();
-            return
+            return;
         }
 
 
@@ -149,7 +149,18 @@ public:
      * \overload  Uses the GenericSourceTypeEnumMap to get the enum val;
      * @param source String Hdmi Source (as String)
      */
-    void switchSource(String source);
+    void switchSource(String source) {
+        auto sourceEnum = this->getSourceEnum(source);
+        this->switchSource(sourceEnum);
+    }
+
+    /**
+     * @brief Get the Source Enum object
+     *  To be Implemented for all source types
+     * @param sourceString String Source as String
+     * @return GenericSourceType 
+     */
+    GenericSourceType getSourceEnum(String sourceString);
 
 
     /**
@@ -186,21 +197,19 @@ private:
      */
     int getSensePinOutput();
 
-
-    /**
-     * @brief Set the Digital Pin State
-     *
-     * @param pinState
-     */
-    void setPinState(bool pinState);
-
     /**
      * @brief Set the Trig object
-     *  To be implemented individually for respective yypes
+     *  To be implemented individually for respective types
      * @param state Digital HIGH or LOW ( 1 or 0 )
      */
     void setTrig(bool state);
 
+    /**
+     * @brief Get the Trig Pin State
+     * 
+     * @return true 
+     * @return false 
+     */
     bool getTrig();
 
     /**
@@ -210,8 +219,4 @@ private:
     void setPinout();
 
 
-};
-
-class HdmiMux : public AbstractMux<HdmiSource, HdmiPinout>
-{
 };
