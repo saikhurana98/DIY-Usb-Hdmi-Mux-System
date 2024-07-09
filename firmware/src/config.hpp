@@ -22,14 +22,14 @@ typedef struct
 
 enum HdmiSource
 {
-    INVALID,
+    HDMI_INVALID,
     HDMI1,
     HDMI2
 };
 
 enum UsbSource
 {
-    INVALID,
+    USB_INVALID,
     USB1,
     USB2,
 };

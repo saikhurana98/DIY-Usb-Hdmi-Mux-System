@@ -100,14 +100,14 @@ public:
         {
             this->currentSource = this->requestedSource;
             this->requestedTimestamp = millis();
-            this->setPinState(false);
+            this->setTrig(0);
             return;
         }
 
 
         if (!this->getTrig()) 
         {
-            this->setTrigHigh();
+            this->setTrig(1);
             return;
         }
 
@@ -170,12 +170,12 @@ public:
      * @param pinout GPIO Pins for the Mux
      * @param retryTimeout Retry runtime threshold
      */
-    AbstractMux(String channel, GenericPinout pinout, long long retryTimeout)
+    TemplateMux(String channel, GenericPinout pinout, long long retryTimeout)
     {
         this->channel = channel;
         this->pinout = pinout;
         this->retryTimeout = retryTimeout;
-    }
+    };
 
 private:
     long long retryTimeout;
@@ -187,7 +187,7 @@ private:
      * @return GenericSourceType
      */
     GenericSourceType getHWSource() {
-        return static_cast<GenericSourceType>(this->getHWSource);
+        return static_cast<GenericSourceType>(this->getSensePinOutput());
     }
 
     /**

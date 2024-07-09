@@ -7,6 +7,26 @@ extern std::map<HdmiSource, String> hdmiSourceStringMap;
 extern std::map<RestoreMode, String> RestoreModeEnumToString;
 extern std::map<String, RestoreMode> RestoreModeStringToEnum;
 
+
+
+
+template<typename GenericMux>
+class TemplateMuxHamdler
+{
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * @brief Handles the HDMI Mux(s) and handles their states.
  * 

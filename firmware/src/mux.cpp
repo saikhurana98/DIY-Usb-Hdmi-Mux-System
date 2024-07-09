@@ -1,5 +1,6 @@
 #include "mux.hpp"
 
+template<>
 void TemplateMux<HdmiSource, HdmiPinout>::setPinout()
 {
     // Inputs
@@ -9,6 +10,7 @@ void TemplateMux<HdmiSource, HdmiPinout>::setPinout()
     pinMode(this->pinout.trig, OUTPUT);
 }
 
+template<>
 void TemplateMux<UsbSource, UsbPinout>::setPinout()
 {
     // Inputs
@@ -19,11 +21,13 @@ void TemplateMux<UsbSource, UsbPinout>::setPinout()
     pinMode(this->pinout.trig, OUTPUT);
 }
 
+template<>
 int TemplateMux<HdmiSource, HdmiPinout>::getSensePinOutput()
 {
     return digitalRead(this->pinout.sense) == HIGH ? 1 : 2;
 }
 
+template<>
 int TemplateMux<UsbSource, UsbPinout>::getSensePinOutput()
 {
     bool sense_1 = digitalRead(this->pinout.sense1);
@@ -35,29 +39,35 @@ int TemplateMux<UsbSource, UsbPinout>::getSensePinOutput()
     return 0;
 }
 
+template<>
 bool TemplateMux<HdmiSource, HdmiPinout>::getTrig()
 {
     return digitalRead(this->pinout.trig);
 }
+
+template<>
 bool TemplateMux<UsbSource, UsbPinout>::getTrig()
 {
     return digitalRead(this->pinout.trig);
 }
 
+template<>
 void TemplateMux<HdmiSource, HdmiPinout>::setTrig(bool state)
 {
     digitalWrite(this->pinout.trig, state);
 }
 
+template<>
 void TemplateMux<UsbSource, UsbPinout>::setTrig(bool state)
 {
     digitalWrite(this->pinout.trig, state);
 }
 
+template<>
 HdmiSource TemplateMux<HdmiSource, HdmiPinout>::getSourceEnum(String sourceString)
 {
     std::map<String, HdmiSource> map = {
-        {"INVALID", HdmiSource::INVALID},
+        {"INVALID", HdmiSource::HDMI_INVALID},
         {"HDMI1", HdmiSource::HDMI1},
         {"HDMI2", HdmiSource::HDMI2},
     };
@@ -65,10 +75,11 @@ HdmiSource TemplateMux<HdmiSource, HdmiPinout>::getSourceEnum(String sourceStrin
     return map[sourceString];
 }
 
+template<>
 UsbSource TemplateMux<UsbSource, UsbPinout>::getSourceEnum(String sourceString)
 {
     std::map<String, UsbSource> map = {
-        {"INVALID", UsbSource::INVALID},
+        {"INVALID", UsbSource::USB_INVALID},
         {"USB1", UsbSource::USB1},
         {"USB2", UsbSource::USB2},
     };

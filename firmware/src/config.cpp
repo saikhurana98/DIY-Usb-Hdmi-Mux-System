@@ -2,13 +2,13 @@
 #include "config.hpp"
 
 std::map<HdmiSource, String> hdmiSourceStringMap = {
-    {HdmiSource::INVALID, "INVALID"},
+    {HdmiSource::HDMI_INVALID, "HDMI_INVALID"},
     {HdmiSource::HDMI1, "HDMI1"},
     {HdmiSource::HDMI2, "HDMI2"},
 };
 
 HdmiChannelSourceMap hdmiStringSourceMap = {
-    {"INVALID", HdmiSource::INVALID},
+    {"HDMI_INVALID", HdmiSource::HDMI_INVALID},
     {"HDMI1", HdmiSource::HDMI1},
     {"HDMI2", HdmiSource::HDMI2},
 };
