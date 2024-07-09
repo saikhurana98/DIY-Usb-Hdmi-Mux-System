@@ -6,6 +6,13 @@
 
 using namespace std;
 
+
+
+
+
+
+
+
 typedef struct
 {
     int txPin;
@@ -18,6 +25,13 @@ enum HdmiSource
     INVALID,
     HDMI1,
     HDMI2
+};
+
+enum UsbSource
+{
+    INVALID,
+    USB1,
+    USB2,
 };
 
 enum RestoreMode

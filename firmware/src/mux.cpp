@@ -1,84 +1,73 @@
 #include "mux.hpp"
 
-void pulse(int trig_pin, bool state)
+ 
+void AbstractMux<HdmiSource, HdmiPinout>::setPinout()
 {
-    digitalWrite(trig_pin, state);
+    // Inputs
+    pinMode(this->pinout.sense,INPUT);
+
+    // Outputs
+    pinMode(this->pinout.trig,OUTPUT);
+}
+
+void AbstractMux<UsbSource, UsbPinout>::setPinout()
+{
+    // Inputs
+    pinMode(this->pinout.sense1,INPUT);
+    pinMode(this->pinout.sense2,INPUT);
+
+    // Outputs
+    pinMode(this->pinout.trig,OUTPUT);
+}
+
+int AbstractMux<HdmiSource, HdmiPinout>::getSensePinOutput()
+{
+    return digitalRead(this->pinout.sense) == HIGH ? 1 : 2;
+}
+
+int AbstractMux<UsbSource, UsbPinout>::getSensePinOutput()
+{
+    bool sense_1 = digitalRead(this->pinout.sense1);
+    bool sense_2 = digitalRead(this->pinout.sense2);
+    if (sense_1) return 1;
+    if (sense_2) return 2;
+    return 0;
+}
+
+bool AbstractMux<HdmiSource, HdmiPinout>::getTrig()
+{
+    return digitalRead(this->pinout.trig);
+}
+bool AbstractMux<UsbSource, UsbPinout>::getTrig()
+{
+    return digitalRead(this->pinout.trig);
+}
+
+void AbstractMux<HdmiSource, HdmiPinout>::setTrig(bool state)
+{
+    digitalWrite(this->pinout.trig,state);
+}
+
+void AbstractMux<UsbSource, UsbPinout>::setTrig(bool state)
+{
+    digitalWrite(this->pinout.trig,state);
 }
 
 
 
-Mux::Mux(String channel, int trig_pin, int sense_pin, long long retryTimeout)
-{
-    this->channel = channel;
-    this->trigPin = trig_pin;
-    this->sensePin = sense_pin;
-    this->retryTimeout = retryTimeout;
-}
 
-HdmiSource Mux::getPinState()
-{
-    return digitalRead(this->sensePin) == HIGH ? HdmiSource::HDMI1 : HdmiSource::HDMI2;
-}
-
-void Mux::switchSource(HdmiSource source)
-{
-    if (source == HdmiSource::INVALID) return;
-    this->requestedSource = source;
-    this->requestedTimestamp = millis();
-}
 void Mux::switchSource(String source)
 {
     HdmiSource sourceEnum = hdmiStringSourceMap[source];
-    if (sourceEnum == HdmiSource::INVALID) return;
+    if (sourceEnum == HdmiSource::INVALID)
+        return;
     this->requestedSource = sourceEnum;
     this->requestedTimestamp = millis();
 }
-HdmiSource Mux::getCurrentSource()
-{
-    return this->currentSource;
-}
 
 
-void Mux::init()
-{
-    pinMode(this->trigPin, OUTPUT);
-    pinMode(this->sensePin, INPUT);
-    this->currentSource = this->getPinState();
-    this->requestedSource = this->currentSource;
-    this->errorFlag = false;
-}
 
 
-void Mux::runtime()
-{
-    // Don't Execute if we have an error
-    if (this->errorFlag)
-        return;
-
-    // if the state is the same then just return 
-    if (this->requestedSource == this->getPinState())
-    {
-        this->currentSource = this->requestedSource;
-        this->requestedTimestamp = millis();
-        this->setPinState(false);
-        return;
-    }
- 
-    if (!digitalRead(this->trigPin))
-    {
-        this->setPinState(true);
-        return;
-    }
-
-    // if we haven't exceeded the timeout then continue processing
-    if (millis() - this->requestedTimestamp > this->retryTimeout) {
-        return;
-    }
-
-
-    this->errorFlag = true;
-    this->currentSource = HdmiSource::INVALID;
-}
 
 void Mux::setPinState(bool pinState)
 {
