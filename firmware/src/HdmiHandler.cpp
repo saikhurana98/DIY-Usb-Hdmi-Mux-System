@@ -6,13 +6,13 @@ HdmiHandler::HdmiHandler(Config &config)
     for (auto channel_pinout : *(config.hdmiChannelPinouts))
     {
         String channel = channel_pinout.first.c_str();
-        pair<int, int> pinout = channel_pinout.second;
-        Mux *mux = new Mux(channel_pinout.first.c_str(), pinout.first, pinout.second, 500);
+        HdmiPinout pinout = {.trig = channel_pinout.second.first, .sense = channel_pinout.second.second};
+        auto *mux = new TemplateMux<HdmiSource, HdmiPinout>(channel_pinout.first.c_str(), pinout, 500);
         this->channelMuxMap[channel] = mux;
     }
 }
 
-Mux *HdmiHandler::getMuxById(String channelId)
+TemplateMux<HdmiSource, HdmiPinout> *HdmiHandler::getMuxById(String channelId)
 {
     if (this->channelMuxMap.count(channelId) != 1)
     {
@@ -23,40 +23,41 @@ Mux *HdmiHandler::getMuxById(String channelId)
 
 void HdmiHandler::setSource(String channel, HdmiSource source)
 {
-    Mux *mux = this->channelMuxMap[channel.c_str()];
+    auto *mux = this->channelMuxMap[channel.c_str()];
     mux->switchSource(source);
 
-    if (this->appConfig->currentRestoreMode == RestoreMode::RESTORE_PREVIOUS) {
+    if (this->appConfig->currentRestoreMode == RestoreMode::RESTORE_PREVIOUS)
+    {
         this->appConfig->restoreState[channel] = source;
-        this->appConfig->setRestoreState(this->appConfig->currentRestoreMode,this->appConfig->restoreState);
+        this->appConfig->setRestoreState(this->appConfig->currentRestoreMode, this->appConfig->restoreState);
     }
 }
 void HdmiHandler::setSource(String channel, String source)
 {
-    Mux *mux = this->channelMuxMap[channel.c_str()];
+    auto *mux = this->channelMuxMap[channel.c_str()];
     mux->switchSource(source);
 
-    if (this->appConfig->currentRestoreMode == RestoreMode::RESTORE_PREVIOUS) {
+    if (this->appConfig->currentRestoreMode == RestoreMode::RESTORE_PREVIOUS)
+    {
         this->appConfig->restoreState[channel] = hdmiStringSourceMap[source];
-        this->appConfig->setRestoreState(this->appConfig->currentRestoreMode,this->appConfig->restoreState);
+        this->appConfig->setRestoreState(this->appConfig->currentRestoreMode, this->appConfig->restoreState);
     }
-
 }
 String HdmiHandler::getSourceString(String channel)
 {
-    Mux *mux = this->getMuxById(channel);
+    auto *mux = this->getMuxById(channel);
     if (mux == NULL)
     {
-        return hdmiSourceStringMap[HdmiSource::INVALID];
+        return hdmiSourceStringMap[HdmiSource::HDMI_INVALID];
     }
     return hdmiSourceStringMap[mux->currentSource];
 }
 
 HdmiSource HdmiHandler::getSource(String channel)
 {
-    Mux *mux = this->channelMuxMap[channel.c_str()];
+    auto *mux = this->channelMuxMap[channel.c_str()];
     if (mux == NULL)
-        return HdmiSource::INVALID;
+        return HdmiSource::HDMI_INVALID;
     return mux->currentSource;
 }
 
@@ -79,7 +80,6 @@ void HdmiHandler::setBootRestoreMode(String mode, JsonDocument map)
     this->appConfig->setRestoreState(restoreMode, sourceMap);
 }
 
-
 void HdmiHandler::init()
 {
     for (auto mux : this->channelMuxMap)
@@ -87,7 +87,6 @@ void HdmiHandler::init()
         mux.second->init();
     }
 }
-
 
 std::vector<Task *> HdmiHandler::getJobs()
 {
@@ -106,15 +105,14 @@ std::vector<Task *> HdmiHandler::getJobs()
     }
 
     // Restore Loaded Config States
-    if (this->appConfig->currentRestoreMode != RestoreMode::NONE) 
+    if (this->appConfig->currentRestoreMode != RestoreMode::NONE)
     {
         jobs.push_back(
             new Task(TASK_MILLISECOND * 500, TASK_ONCE, [this]()
                      { 
                         for (auto channel_mux : this->channelMuxMap) {
                             channel_mux.second->switchSource(this->appConfig->restoreState[channel_mux.first.c_str()]);
-                        }
-                     }));
+                        } }));
     }
 
     return jobs;
