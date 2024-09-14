@@ -31,6 +31,12 @@ typedef struct
     int sense2;
 } UsbPinout;
 
+class BaseMux{
+    public:
+    virtual void init();
+    virtual void runtime();
+};
+
 /**
  * @brief Creates the Class for either an Hdmi Mux or a USB Mux. Since HDMI Mux uses a single sense pin and the USB Mux uses two sense pins
  *
@@ -43,7 +49,7 @@ template <typename GenericSourceType, typename GenericPinout>
  * Manages an individual mux switch. Requests for a state change and then validates it.
  * make sure runtime() is called repeatedly.
  */
-class TemplateMux
+class TemplateMux : public BaseMux
 {
 public:
     /**
