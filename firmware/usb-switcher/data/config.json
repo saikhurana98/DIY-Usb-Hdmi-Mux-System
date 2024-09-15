@@ -1,0 +1,8 @@
+{
+    "config": {
+      "restoreMode": "NONE",
+      "restoreState": {
+        "A": "USB1"
+      }
+    }
+}
