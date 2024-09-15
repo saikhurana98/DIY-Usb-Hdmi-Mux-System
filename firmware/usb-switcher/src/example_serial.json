@@ -1,0 +1,45 @@
+{
+    "api": [
+        {
+            "cmd": "GET_SOURCE",
+            "payload": {
+                "channel": "A"
+            }
+        },
+        {
+            "cmd": "GET_SOURCE_MULTI",
+            "payload": {
+                "channels": [
+                    "A",
+                    "B",
+                    "C"
+                ]
+            }
+        },
+        {
+            "cmd": "SET_SOURCE",
+            "payload": {
+                "A": "HDMI2",
+                "B": "HDMI2",
+                "C": "HDMI2"
+            }
+        },
+        {
+            "cmd": "SET_RESTORE_MODE",
+            "payload": {
+                "mode": "CUSTOM",
+                "restoreState": {
+                    "A": "HDMI1",
+                    "B": "HDMI1",
+                    "C": "HDMI1"
+                }
+            }
+        },
+        {
+            "cmd": "SET_RESTORE_MODE",
+            "payload": {
+                "mode": "RESTORE_PREVIOUS"
+            }
+        }
+    ]
+}
